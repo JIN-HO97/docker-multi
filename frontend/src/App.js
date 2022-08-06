@@ -1,52 +1,61 @@
+import React, { useState, useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { useState, useEffect } from "react";
 import axios from "axios";
+
 function App() {
   useEffect(() => {
-    axios.get("/api/values").then((res) => {
-      console.log(res);
-      setList(res.data);
+    axios.get("/api/hi").then((response) => {
+      console.log("response", response);
     });
   }, []);
 
-  const changeHandler = (e) => {
-    setValue(e.currentTarget.value);
-  };
+  useEffect(() => {
+    //여기서 데이터베이스에 있는 값을 가져온다.
+    axios.get("/api/values").then((response) => {
+      console.log("response", response);
+      setLists(response.data);
+    });
+  }, []);
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    axios
-      .post("/api/value", {
-        value,
-      })
-      .then((res) => {
-        if (res.data.success) {
-          console.log("SUCESS", res.data);
-          setList([...list, res.data.value]);
-          setValue("");
-        } else {
-          console.log("FAIL", res.data);
-        }
-      });
-  };
-
-  const [list, setList] = useState([]);
+  const [lists, setLists] = useState([]);
   const [value, setValue] = useState("");
+
+  const changeHandler = (event) => {
+    setValue(event.currentTarget.value);
+  };
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+
+    axios.post("/api/value", { value: value }).then((response) => {
+      if (response.data.success) {
+        console.log("response", response);
+        setLists([...lists, response.data]);
+        setValue("");
+      } else {
+        alert("값을 DB에 넣는데 실패했습니다.");
+      }
+    });
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <div className="container">
-          {list && list.map((li, ind) => <li key={ind}>{li.value}</li>)}
-          <form className="example" onSubmit>
+          {lists &&
+            lists.map((list, index) => <li key={index}>{list.value} </li>)}
+          <br />
+          안녕하세요.
+          <form className="example" onSubmit={submitHandler}>
             <input
               type="text"
-              placeholder="입력ㄲㄱ"
+              placeholder="입력해주세요..."
               onChange={changeHandler}
               value={value}
             />
-            <button type="submit">화긴</button>
+            <button type="submit">확인.</button>
           </form>
         </div>
       </header>
