@@ -1,44 +1,53 @@
-# version: "3"
-# services:
-#   frontend:
-#     build:
-#       dockerfile: Dockerfile.dev
-#       context: ./frontend
-#     volumes:
-#       - /app/node_modules
-#       - ./frontend:/app
-#     stdin_open: true
+version: "3"
+services:
+  frontend:
+    image: wlsgh97/docker-frontend
+    # build:
+    #   dockerfile: Dockerfile.dev
+    #   context: ./frontend
+    volumes:
+      - /app/node_modules
+      - ./frontend:/app
+    stdin_open: true
 
-#   nginx:
-#     restart: always
-#     build:
-#       dockerfile: Dockerfile
-#       context: ./nginx
-#     ports:
-#       - "3000:80"
+  nginx:
+    restart: always
+    # build:
+    # dockerfile: Dockerfile
+    # context: ./nginx
+    image: wlsgh97/docker-nginx
+    ports:
+      - "80:80"
 
-#   backend:
-#     build:
-#       dockerfile: Dockerfile.dev
-#       context: ./backend
-#     container_name: back
-#     volumes:
-#       - /app/node_modules
-#       - ./backend:/app
-#     environment:
-#       MYSQL_HOST: mysql
-#       MYSQL_USER: root
-#       MYSQL_ROOT_PASSWORD: aaaa1234
-#       MYSQL_DATABASE: myapp
-#       MYSQL_PORT: 3306
-#   # mysql:
-#   #   build: ./mysql
-#   #   restart: unless-stopped
-#   #   ports:
-#   #     - "3306:3306"
-#   #   volumes:
-#   #     - ./mysql/mysql_data:/var/lib/mysql
-#   #     - ./mysql/sqls/:/docker-entrypoint-initdb.d/
-#   #   environment:
-#   #     MYSQL_ROOT_PASSWORD: 1234
-#   #     MYSQL_DATABASE: myapp
+  backend:
+    # build:
+    # dockerfile: Dockerfile.dev
+    # context: ./backend
+    image: wlsgh97/docker-backend
+    container_name: back
+    volumes:
+      - /app/node_modules
+      - ./backend:/app
+    environment:
+      # MYSQL_HOST: mysql
+      # MYSQL_HOST: docker-fullstack-mysql.crsvzbquvzmf.ap-northeast-2.rds.amazonaws.com
+      # MYSQL_USER: root
+      # MYSQL_ROOT_PASSWORD: aaaa1234
+      # MYSQL_DATABASE: myapp
+      # MYSQL_PORT: 3306
+      MYSQL_HOST: $MYSQL_HOST
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_PORT: $MYSQL_PORT
+  # mysql:
+  #   build: ./mysql
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - ./mysql/mysql_data:/var/lib/mysql
+  #     - ./mysql/sqls/:/docker-entrypoint-initdb.d/
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 1234
+  #     MYSQL_DATABASE: myapp
