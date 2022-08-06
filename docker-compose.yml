@@ -18,6 +18,9 @@ services:
     image: wlsgh97/docker-nginx
     ports:
       - "80:80"
+    links:
+      - frontend
+      - backend
 
   backend:
     # build:
